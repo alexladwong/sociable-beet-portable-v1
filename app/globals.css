@@ -57,12 +57,11 @@ blockquote{margin:14px 0;font-size:18px;line-height:1.55}
 .avatar{width:34px;height:34px;border-radius:999px;background:var(--accent);color:var(--accent-contrast);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
 
 @media(max-width:950px){
-  .shell{grid-template-columns:76px 1fr}
-  .brand{display:none}
-  .sidebar a{font-size:0}
-  .nav-item{font-size:0}
-  .workspace-switcher-name,.workspace-switcher-chevron{display:none}
-  .workspace-switcher-trigger{justify-content:center}
+  /* The plain (pre-auth demo) shell squeezes to an icon rail; the workspace
+     shell has its own JS-driven collapse (see .workspace-shell rules below). */
+  .plain-shell{grid-template-columns:76px 1fr}
+  .plain-shell .brand{display:none}
+  .plain-shell .sidebar a{font-size:0}
   .metrics{grid-template-columns:repeat(2,1fr)}
   .two{grid-template-columns:1fr}
 }
@@ -144,24 +143,92 @@ blockquote{margin:14px 0;font-size:18px;line-height:1.55}
 .empty-state{padding:22px 2px 6px;text-align:left;display:grid;gap:10px;justify-items:start}
 .empty-state p{margin:0;max-width:34ch}
 
-/* Mobile drawer (workspace shell only) */
-.mobile-nav-checkbox{display:none}
-.sidebar-overlay{display:none}
+/* === Workspace shell: collapsible sidebar ===
+   Expanded 252px / collapsed 72px rail (desktop), off-canvas drawer <768px.
+   The JS in workspace-sidebar.tsx owns the .collapsed / .open classes and
+   persists the choice in localStorage; the pre-hydration bootstrap script in
+   workspace-shell.tsx applies .collapsed before first paint. */
+.workspace-shell{grid-template-columns:auto 1fr}
+.workspace-shell .sidebar{display:flex;flex-direction:column;width:252px;padding:20px 10px 12px;overflow:visible;transition:width .18s ease}
+.workspace-shell .sidebar.collapsed{width:72px}
 
-@media(max-width:650px){
+.workspace-shell .sidebar-brand{display:flex;align-items:center;min-height:30px;margin:0 6px 16px}
+.workspace-shell .sidebar-brand a{display:inline-flex;align-items:center;min-width:0}
+.workspace-shell .sidebar-logo{height:30px;width:auto;max-width:186px;object-fit:contain}
+.workspace-shell .sidebar.collapsed .sidebar-brand{justify-content:center}
+.workspace-shell .sidebar.collapsed .sidebar-logo{max-width:48px}
+
+.workspace-shell .sidebar .nav{flex-shrink:0}
+.workspace-shell .sidebar-nav{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;margin:6px -4px 4px;padding:0 4px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.workspace-shell .nav-item{font-size:14px}
+.workspace-shell .nav-divider{flex-shrink:0}
+
+/* Collapsed rail: center icons, hide labels (tooltips carry the names) */
+.workspace-shell .sidebar.collapsed .nav a,
+.workspace-shell .sidebar.collapsed .nav-item{justify-content:center;gap:0;padding:10px 0}
+.workspace-shell .sidebar.collapsed .nav a>span,
+.workspace-shell .sidebar.collapsed .nav-item>span{display:none}
+.workspace-shell .sidebar.collapsed .nav-divider{margin:8px 6px}
+.workspace-shell .sidebar.collapsed .workspace-switcher-trigger{justify-content:center;gap:0;padding:8px 0}
+.workspace-shell .sidebar.collapsed .workspace-switcher-name,
+.workspace-shell .sidebar.collapsed .workspace-switcher-chevron{display:none}
+
+/* Drawer backdrop (rendered only while open; base styles cover all widths) */
+.sidebar-overlay{position:fixed;inset:0;z-index:55;border:none;padding:0;background:rgba(0,0,0,.5)}
+
+/* Collapse control pinned below the nav */
+.workspace-shell .sidebar-footer{flex-shrink:0;border-top:1px solid var(--border);margin-top:10px;padding:10px 2px 0}
+.workspace-shell .sidebar-collapse-btn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:none;background:transparent;border-radius:9px;color:var(--muted);cursor:pointer;font:inherit;font-size:13.5px;text-align:left}
+.workspace-shell .sidebar-collapse-btn:hover{background:var(--surface);color:var(--text)}
+.workspace-shell .sidebar.collapsed .sidebar-collapse-btn{justify-content:center;padding:9px 0}
+.workspace-shell .sidebar.collapsed .sidebar-collapse-btn span{display:none}
+
+/* Switcher dropdown should never outgrow short viewports */
+.workspace-shell .workspace-switcher-menu{max-height:min(70vh,520px);overflow-y:auto}
+.workspace-shell .sidebar.collapsed .workspace-switcher-menu{left:0;right:auto;width:260px}
+
+/* Keyboard focus */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.workspace-shell .sidebar-collapse-btn:focus-visible{outline-offset:0}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  .workspace-shell .sidebar{transition:none}
+  .row-link{transition:none}
+}
+
+/* Medium screens: icon rail unless the user chose full width */
+@media(max-width:1023px) and (min-width:768px){
+  .workspace-shell .sidebar{width:72px}
+  .workspace-shell .sidebar:not(.collapsed){width:252px}
+}
+
+/* Small screens: off-canvas drawer driven by .open (JS), overlay closes it */
+@media(max-width:767px){
   .workspace-shell{display:block}
   .mobile-nav-btn{display:inline-flex}
   .topbar-search{display:none}
   .actions .btn:not(.icon-btn):not(.primary):not(.theme-toggle){display:none}
   .btn.primary .btn-label{display:none}
   .btn.primary{padding:0 11px}
-  .workspace-shell .sidebar{position:fixed;top:0;left:0;height:100vh;width:264px;transform:translateX(-100%);transition:transform .22s ease;z-index:50}
-  .workspace-shell .sidebar .brand,
-  .workspace-shell .sidebar .workspace-switcher-name,
-  .workspace-shell .sidebar .workspace-switcher-chevron{display:block}
-  .workspace-shell .sidebar .nav-item{font-size:14px;justify-content:flex-start}
-  .workspace-shell .sidebar .workspace-switcher-trigger{justify-content:flex-start}
-  .mobile-nav-checkbox:checked ~ .sidebar{transform:translateX(0)}
-  .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40}
-  .mobile-nav-checkbox:checked ~ .sidebar-overlay{display:block}
+
+  .workspace-shell .sidebar,
+  .workspace-shell .sidebar.collapsed{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);height:auto;transform:translateX(-104%);visibility:hidden;transition:transform .22s ease,visibility .22s;z-index:60;box-shadow:none}
+  .workspace-shell .sidebar.open{transform:translateX(0);visibility:visible;box-shadow:0 0 0 1px var(--border),0 24px 60px rgba(0,0,0,.28)}
+
+  /* The drawer always shows the full, expanded layout regardless of the
+     desktop collapse preference */
+  .workspace-shell .sidebar.open.collapsed .nav a,
+  .workspace-shell .sidebar.open.collapsed .nav-item{justify-content:flex-start;gap:11px;padding:9px 12px}
+  .workspace-shell .sidebar.open.collapsed .nav a>span,
+  .workspace-shell .sidebar.open.collapsed .nav-item>span{display:inline}
+  .workspace-shell .sidebar.open .workspace-switcher-trigger{justify-content:flex-start;gap:9px;padding:8px 9px}
+  .workspace-shell .sidebar.open .workspace-switcher-name,
+  .workspace-shell .sidebar.open .workspace-switcher-chevron{display:block}
+  .workspace-shell .sidebar.open .sidebar-brand{justify-content:flex-start}
+  .workspace-shell .sidebar.open .sidebar-logo{max-width:186px}
+  .workspace-shell .sidebar.open .workspace-switcher-menu{left:0;right:0;width:auto}
+  .workspace-shell .sidebar-collapse-btn{display:none}
+
+  .sidebar-overlay{position:fixed;inset:0;z-index:55;border:none;padding:0;background:rgba(0,0,0,.5)}
 }

@@ -138,3 +138,19 @@ export function ChevronDownIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+export function ChevronsLeftIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="m11 17-5-5 5-5M18 17l-5-5 5-5" />
+    </svg>
+  );
+}
+
+export function ChevronsRightIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="m6 17 5-5-5-5M13 17l5-5-5-5" />
+    </svg>
+  );
+}

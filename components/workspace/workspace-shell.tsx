@@ -5,6 +5,23 @@ import { canManageWorkspace as canManageWorkspaceRole, canManageProjects as canM
 
 type MembershipWithWorkspace = Membership & { workspace: Workspace };
 
+// Runs before first paint and before hydration so a returning user's collapsed
+// sidebar never flashes expanded. Must mirror readCollapsedPreference() in
+// workspace-sidebar.tsx exactly - the DOM it produces and the state the client
+// hydrates with must agree.
+const SIDEBAR_BOOTSTRAP = `(function () {
+  try {
+    var key = "sb.sidebar.collapsed";
+    var stored = null;
+    try { stored = localStorage.getItem(key); } catch (e) {}
+    var el = document.querySelector("[data-sidebar]");
+    if (!el) return;
+    var w = document.documentElement.clientWidth;
+    var collapsed = stored === "1" || (stored === null && w >= 768 && w < 1024);
+    if (collapsed) el.classList.add("collapsed");
+  } catch (e) {}
+})();`;
+
 export function WorkspaceShell({
   workspace,
   membership,
@@ -28,15 +45,13 @@ export function WorkspaceShell({
 
   return (
     <div className="shell workspace-shell">
-      {/* CSS-only mobile drawer: checked state slides .sidebar in and shows the overlay (see globals.css) */}
-      <input type="checkbox" id="mobile-nav-toggle" className="mobile-nav-checkbox" />
       <WorkspaceSidebar
         workspace={workspace}
         memberships={memberships}
         active={active}
         canManageWorkspace={canManage}
       />
-      <label htmlFor="mobile-nav-toggle" className="sidebar-overlay" aria-hidden="true" />
+      <script dangerouslySetInnerHTML={{ __html: SIDEBAR_BOOTSTRAP }} />
       <main className="main">
         <WorkspaceTopbar
           title={title ?? active}

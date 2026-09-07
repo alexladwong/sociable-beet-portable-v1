@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { Profile } from "@prisma/client";
 import { ThemeToggle } from "../theme-toggle";
 import { UserMenu } from "./user-menu";
-import { SearchIcon, BellIcon, PlusIcon, MenuIcon } from "./icons";
+import { SidebarMenuButton } from "./sidebar-menu-button";
+import { SearchIcon, BellIcon, PlusIcon } from "./icons";
 
 export function WorkspaceTopbar({
   title,
@@ -20,9 +21,7 @@ export function WorkspaceTopbar({
   return (
     <header className="topbar">
       <div className="topbar-left">
-        <label htmlFor="mobile-nav-toggle" className="btn icon-btn mobile-nav-btn" aria-label="Open menu">
-          <MenuIcon />
-        </label>
+        <SidebarMenuButton />
         <strong>{title}</strong>
       </div>
       <div className="actions">
