@@ -1,4 +1,4 @@
-import { SignInForm } from "./sign-in-form";
+import SignInForm from "./sign-in-form";
 
 export default async function SignInPage({
   searchParams,
