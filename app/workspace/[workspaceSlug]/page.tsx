@@ -33,7 +33,7 @@ export default async function WorkspaceDashboardPage({
   const [memberships, members, dashboard] = await Promise.all([
     listMembershipsForProfile(profile.id),
     listMembersForWorkspace(workspace.id),
-    getWorkspaceDashboardData(workspace.id),
+    getWorkspaceDashboardData(workspace.id, workspace.slug),
   ]);
 
   const firstName = (profile.name || profile.email).split(/\s+/)[0];
@@ -68,7 +68,7 @@ export default async function WorkspaceDashboardPage({
         />
         <div className="grid" style={{ gap: 16 }}>
           <MyTasks />
-          <Upcoming posts={dashboard.upcomingPosts} />
+          <Upcoming items={dashboard.upcomingItems} />
         </div>
       </section>
 
