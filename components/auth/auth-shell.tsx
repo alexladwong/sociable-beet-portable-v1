@@ -4,7 +4,6 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="auth-page">
       <section className="auth-card">{children}</section>
-      <p className="auth-page-footer">© Sociable Beet</p>
     </main>
   );
 }

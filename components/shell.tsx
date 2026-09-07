@@ -4,7 +4,14 @@ export function Shell({children,title="Workspace"}:{children:React.ReactNode,tit
   return (
     <div className="shell plain-shell">
       <aside className="sidebar">
-        <div className="brand">Sociable Beet</div>
+        <a href="/">
+          <div className="brand">
+            <div className="logo flex items-center justify-center">
+              <img className="h-5 w-5 object-contain object-left" src="/logo.png" alt="Sociable Beet" />
+            </div>
+            <span>Sociable Beet</span>
+          </div>
+        </a>
         <nav className="nav">
           <a className={title==="Workspace"?"active":""} href="/">Workspace</a>
           <a className={title==="Projects"?"active":""} href="/projects">Projects</a>
