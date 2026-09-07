@@ -23,14 +23,21 @@ export async function signUpWithEmail(
   }
 
   const { data: session } = await auth.getSession();
-  if (session?.user) {
-    // Mirror the Neon Auth user into our app's Profile table.
-    await prisma.profile.upsert({
-      where: { id: session.user.id },
-      create: { id: session.user.id, email: session.user.email, name: session.user.name },
-      update: { email: session.user.email, name: session.user.name },
-    });
+
+  // If the project has "Verify at Sign-up" enabled, no session cookie is set
+  // yet - the account exists but is pending email verification. Rather than
+  // trust a specific shape from signUp.email's response, treat "no session"
+  // as "needs verification" and send the user to enter the emailed OTP code.
+  if (!session?.user) {
+    redirect(`/auth/verify-email?email=${encodeURIComponent(email)}`);
   }
+
+  // Mirror the Neon Auth user into our app's Profile table.
+  await prisma.profile.upsert({
+    where: { id: session.user.id },
+    create: { id: session.user.id, email: session.user.email, name: session.user.name },
+    update: { email: session.user.email, name: session.user.name },
+  });
 
   redirect("/workspace");
 }
