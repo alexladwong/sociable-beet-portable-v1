@@ -1,0 +1,23 @@
+export function Shell({children,title="Workspace"}:{children:React.ReactNode,title?:string}) {
+  return (
+    <div className="shell">
+      <aside className="sidebar">
+        <div className="brand">Sociable Beet</div>
+        <nav className="nav">
+          <a className={title==="Workspace"?"active":""} href="/">Workspace</a>
+          <a className={title==="Projects"?"active":""} href="/projects">Projects</a>
+          <a className={title==="Tasks"?"active":""} href="/tasks">Tasks</a>
+          <a className={title==="Social Studio"?"active":""} href="/social">Social Studio</a>
+          <a href="#">Files</a><a href="#">Activity</a><a href="#">Analytics</a><a href="#">Team</a><a href="#">Settings</a>
+        </nav>
+      </aside>
+      <main className="main">
+        <header className="topbar">
+          <strong>{title}</strong>
+          <div className="actions"><button className="btn">Invite</button><button className="btn primary">New Project</button></div>
+        </header>
+        <div className="content">{children}</div>
+      </main>
+    </div>
+  );
+}

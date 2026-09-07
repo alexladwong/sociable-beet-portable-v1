@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectStatus { PLANNING ACTIVE REVIEW COMPLETED ARCHIVED }
+enum TaskStatus { TODO IN_PROGRESS REVIEW COMPLETED BLOCKED }
+enum Priority { LOW MEDIUM HIGH URGENT }
+enum SocialPostStatus { DRAFT SCHEDULED PUBLISHED FAILED }
+enum SocialPostType { INSPIRATION DEVOTIONAL LEADERSHIP ENCOURAGEMENT PRODUCTIVITY ANNOUNCEMENT }
+
+model Workspace {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  projects    Project[]
+  socialPosts SocialPost[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  workspaceId String
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANNING)
+  progress    Int           @default(0)
+  dueDate     DateTime?
+  tasks       Task[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  projectId   String
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  dueDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model SocialPost {
+  id          String           @id @default(cuid())
+  workspaceId String
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  title       String?
+  body        String
+  type        SocialPostType   @default(INSPIRATION)
+  status      SocialPostStatus @default(DRAFT)
+  channels    String[]
+  hashtags    String[]
+  mediaUrl    String?
+  scheduledAt DateTime?
+  publishedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
