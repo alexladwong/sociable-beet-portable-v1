@@ -1,19 +1,21 @@
+import Link from "next/link";
 import type { Profile } from "@prisma/client";
 import { ThemeToggle } from "../theme-toggle";
 import { UserMenu } from "./user-menu";
 import { SearchIcon, BellIcon, PlusIcon, MenuIcon } from "./icons";
-import type { WorkspaceSectionTitle } from "./workspace-sidebar";
 
 export function WorkspaceTopbar({
   title,
   profile,
   workspaceSlug,
   canManageWorkspace,
+  canManageProjects,
 }: {
-  title: WorkspaceSectionTitle;
+  title: string;
   profile: Profile;
   workspaceSlug: string;
   canManageWorkspace: boolean;
+  canManageProjects: boolean;
 }) {
   return (
     <header className="topbar">
@@ -35,10 +37,17 @@ export function WorkspaceTopbar({
         <button type="button" className="btn" disabled title="Invitations coming soon">
           Invite
         </button>
-        <button type="button" className="btn primary" disabled title="Project creation coming soon">
-          <PlusIcon />
-          <span className="btn-label">New Project</span>
-        </button>
+        {canManageProjects ? (
+          <Link href={`/workspace/${workspaceSlug}/projects/new`} className="btn primary">
+            <PlusIcon />
+            <span className="btn-label">New Project</span>
+          </Link>
+        ) : (
+          <button type="button" className="btn primary" disabled title="Only managers and above can create projects">
+            <PlusIcon />
+            <span className="btn-label">New Project</span>
+          </button>
+        )}
         <UserMenu profile={profile} workspaceSlug={workspaceSlug} canManageWorkspace={canManageWorkspace} />
       </div>
     </header>

@@ -94,11 +94,17 @@ model Project {
   name        String
   description String?
   status      ProjectStatus @default(PLANNING)
+  priority    Priority      @default(MEDIUM)
   progress    Int           @default(0)
+  startDate   DateTime?
   dueDate     DateTime?
+  createdBy   String?
+  creator     Profile?      @relation(fields: [createdBy], references: [id], onDelete: SetNull)
   tasks       Task[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+
+  @@index([workspaceId])
 }
 
 model Task {
@@ -118,12 +124,13 @@ model Task {
 // Not a foreign key into neon_auth's schema (managed separately by Neon Auth) -
 // this is app-owned profile data keyed by the same id.
 model Profile {
-  id          String       @id
-  email       String       @unique
-  name        String?
-  memberships Membership[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id              String       @id
+  email           String       @unique
+  name            String?
+  memberships     Membership[]
+  createdProjects Project[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
 model SocialPost {

@@ -15,17 +15,21 @@ import {
 
 type MembershipWithWorkspace = Membership & { workspace: Workspace };
 
-export type WorkspaceSectionTitle = "Dashboard" | "Team" | "Settings";
+// Which top-level section is highlighted in the sidebar. Decoupled from the
+// topbar's (free-text) title so nested pages - e.g. a single project's
+// detail/settings page - can show their own title while "Projects" stays
+// the active nav item.
+export type WorkspaceNavKey = "Dashboard" | "Projects" | "Team" | "Settings";
 
 export function WorkspaceSidebar({
   workspace,
   memberships,
-  title,
+  active,
   canManageWorkspace,
 }: {
   workspace: Workspace;
   memberships: MembershipWithWorkspace[];
-  title: WorkspaceSectionTitle;
+  active: WorkspaceNavKey;
   canManageWorkspace: boolean;
 }) {
   const slug = workspace.slug;
@@ -34,9 +38,9 @@ export function WorkspaceSidebar({
     label: string,
     href: string,
     Icon: (props: { className?: string }) => React.ReactElement,
-    active: boolean
+    isActive: boolean
   ) => (
-    <Link className={`nav-item${active ? " active" : ""}`} href={href}>
+    <Link className={`nav-item${isActive ? " active" : ""}`} href={href}>
       <Icon className="nav-icon" />
       <span>{label}</span>
     </Link>
@@ -54,20 +58,20 @@ export function WorkspaceSidebar({
       <div className="brand">Sociable Beet</div>
       <WorkspaceSwitcher current={workspace} memberships={memberships} />
       <nav className="nav">
-        {navLink("Dashboard", `/workspace/${slug}`, DashboardIcon, title === "Dashboard")}
-        {disabledNavItem("Projects", ProjectsIcon)}
+        {navLink("Dashboard", `/workspace/${slug}`, DashboardIcon, active === "Dashboard")}
+        {navLink("Projects", `/workspace/${slug}/projects`, ProjectsIcon, active === "Projects")}
         {disabledNavItem("Tasks", TasksIcon)}
         {disabledNavItem("Social Studio", SocialIcon)}
         {disabledNavItem("Files", FilesIcon)}
         {disabledNavItem("Activity", ActivityIcon)}
         {disabledNavItem("Analytics", AnalyticsIcon)}
-        {navLink("Team", `/workspace/${slug}/team`, TeamIcon, title === "Team")}
+        {navLink("Team", `/workspace/${slug}/team`, TeamIcon, active === "Team")}
       </nav>
       {canManageWorkspace && (
         <>
           <div className="nav-divider" />
           <nav className="nav">
-            {navLink("Settings", `/workspace/${slug}/settings`, SettingsIcon, title === "Settings")}
+            {navLink("Settings", `/workspace/${slug}/settings`, SettingsIcon, active === "Settings")}
           </nav>
         </>
       )}

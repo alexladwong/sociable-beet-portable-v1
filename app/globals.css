@@ -46,6 +46,8 @@ button,input,textarea,select{font:inherit}
 .label,.small,.meta{color:var(--muted);font-size:13px}.value{font-size:28px;font-weight:720;margin-top:10px}
 .two{grid-template-columns:1.6fr 1fr;align-items:start}.section-title{font-size:15px;margin:0 0 14px}
 .row{padding:14px 0;border-top:1px solid var(--border)}.row:first-of-type{border-top:0}
+.row-link{cursor:pointer;transition:background .15s ease}
+.row-link:hover{background:var(--surface)}
 .progress{height:6px;background:var(--surface);border-radius:99px;overflow:hidden;margin-top:10px}.progress span{display:block;height:100%;background:var(--accent)}
 .social{margin-top:16px;background:var(--surface)}.pill{display:inline-flex;border:1px solid var(--border);padding:5px 8px;border-radius:999px;font-size:12px;color:var(--muted);margin-right:6px}
 blockquote{margin:14px 0;font-size:18px;line-height:1.55}
@@ -128,6 +130,11 @@ blockquote{margin:14px 0;font-size:18px;line-height:1.55}
 .user-menu-footer{margin-top:2px}
 .user-menu-signout{color:#c0392b}
 .user-menu-signout:hover{background:color-mix(in srgb, #c0392b 12%, transparent)}
+
+/* Project detail tabs */
+.project-tabs{display:flex;align-items:center;gap:2px;margin:18px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.project-tab{border-radius:9px 9px 0 0;padding:9px 14px;margin-bottom:-1px;border-bottom:2px solid transparent}
+.project-tab.active{border-bottom-color:var(--text);background:transparent;color:var(--text)}
 
 /* Dashboard */
 .dash-welcome{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}

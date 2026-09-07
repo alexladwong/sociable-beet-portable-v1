@@ -11,6 +11,7 @@ import { MyTasks } from "@/components/workspace/my-tasks";
 import { Upcoming } from "@/components/workspace/upcoming";
 import { RecentActivity } from "@/components/workspace/recent-activity";
 import { DailyInspiration } from "@/components/workspace/daily-inspiration";
+import { canManageProjects } from "@/lib/permissions/roles";
 
 // Session/membership data depends on cookies, so this must render dynamically.
 export const dynamic = "force-dynamic";
@@ -43,7 +44,7 @@ export default async function WorkspaceDashboardPage({
   });
 
   return (
-    <WorkspaceShell workspace={workspace} membership={membership} profile={profile} memberships={memberships} title="Dashboard">
+    <WorkspaceShell workspace={workspace} membership={membership} profile={profile} memberships={memberships} active="Dashboard">
       <div className="dash-welcome">
         <div>
           <h1>{greeting()}, {firstName}</h1>
@@ -60,7 +61,11 @@ export default async function WorkspaceDashboardPage({
       </section>
 
       <section className="grid two dash-main">
-        <RecentProjects projects={dashboard.recentProjects} />
+        <RecentProjects
+          projects={dashboard.recentProjects}
+          workspaceSlug={workspace.slug}
+          canCreate={canManageProjects(membership.role)}
+        />
         <div className="grid" style={{ gap: 16 }}>
           <MyTasks />
           <Upcoming posts={dashboard.upcomingPosts} />

@@ -15,7 +15,7 @@ export default async function SettingsPage({
   const memberships = await listMembershipsForProfile(profile.id);
 
   return (
-    <WorkspaceShell workspace={workspace} membership={membership} profile={profile} memberships={memberships} title="Settings">
+    <WorkspaceShell workspace={workspace} membership={membership} profile={profile} memberships={memberships} active="Settings">
       <section className="hero">
         <h1>Workspace settings</h1>
         <p>Only Owners and Admins can update these details.</p>

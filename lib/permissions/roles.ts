@@ -31,6 +31,13 @@ export function canManageProjects(role: WorkspaceRole): boolean {
   return roleAtLeast(role, "MANAGER");
 }
 
+// Archiving/deleting is more destructive than day-to-day project management,
+// so it's held to a higher bar than canManageProjects (MANAGER can create/edit,
+// only ADMIN+ can archive/delete).
+export function canDeleteProjects(role: WorkspaceRole): boolean {
+  return roleAtLeast(role, "ADMIN");
+}
+
 export function canDeleteWorkspace(role: WorkspaceRole): boolean {
   return role === "OWNER";
 }
