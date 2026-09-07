@@ -143,92 +143,100 @@ blockquote{margin:14px 0;font-size:18px;line-height:1.55}
 .empty-state{padding:22px 2px 6px;text-align:left;display:grid;gap:10px;justify-items:start}
 .empty-state p{margin:0;max-width:34ch}
 
-/* === Workspace shell: collapsible sidebar ===
-   Expanded 252px / collapsed 72px rail (desktop), off-canvas drawer <768px.
-   The JS in workspace-sidebar.tsx owns the .collapsed / .open classes and
-   persists the choice in localStorage; the pre-hydration bootstrap script in
-   workspace-shell.tsx applies .collapsed before first paint. */
-.workspace-shell{grid-template-columns:auto 1fr}
-.workspace-shell .sidebar{display:flex;flex-direction:column;width:252px;padding:20px 10px 12px;overflow:visible;transition:width .18s ease}
-.workspace-shell .sidebar.collapsed{width:72px}
+/* === Workspace shell: VS Code-style rail + fly-out panel ===
+   Collapsed: 56px icon rail (labels hidden, tooltips). Hovering the rail (or
+   focusing it) expands the panel in place; clicking a nav item pins it open.
+   Pinned state persists in localStorage; .pinned is applied pre-paint by the
+   bootstrap script in workspace-shell.tsx. Below 768px the chrome becomes an
+   off-canvas drawer (.open). */
+.workspace-shell{display:flex;align-items:flex-start}
+.workspace-shell .main{flex:1;min-width:0}
 
-.workspace-shell .sidebar-brand{display:flex;align-items:center;min-height:30px;margin:0 6px 16px}
-.workspace-shell .sidebar-brand a{display:inline-flex;align-items:center;min-width:0}
-.workspace-shell .sidebar-logo{height:30px;width:auto;max-width:186px;object-fit:contain}
-.workspace-shell .sidebar.collapsed .sidebar-brand{justify-content:center}
-.workspace-shell .sidebar.collapsed .sidebar-logo{max-width:48px}
+.ws-chrome{position:sticky;top:0;flex-shrink:0;display:flex;flex-direction:column;width:56px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);z-index:30;transition:width .16s ease}
+.ws-chrome.pinned,.ws-chrome.fly{width:304px}
 
-.workspace-shell .sidebar .nav{flex-shrink:0}
-.workspace-shell .sidebar-nav{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;margin:6px -4px 4px;padding:0 4px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
-.workspace-shell .nav-item{font-size:14px}
-.workspace-shell .nav-divider{flex-shrink:0}
+/* Brand */
+.ws-brand{flex-shrink:0;padding:16px 10px 14px}
+.ws-brand a{display:flex;align-items:center;gap:10px;min-width:0}
+.ws-logo{width:30px;height:30px;border-radius:8px;object-fit:contain;flex-shrink:0}
+.ws-wordmark{font-size:14.5px;font-weight:720;letter-spacing:-.02em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* Collapsed rail: center icons, hide labels (tooltips carry the names) */
-.workspace-shell .sidebar.collapsed .nav a,
-.workspace-shell .sidebar.collapsed .nav-item{justify-content:center;gap:0;padding:10px 0}
-.workspace-shell .sidebar.collapsed .nav a>span,
-.workspace-shell .sidebar.collapsed .nav-item>span{display:none}
-.workspace-shell .sidebar.collapsed .nav-divider{margin:8px 6px}
-.workspace-shell .sidebar.collapsed .workspace-switcher-trigger{justify-content:center;gap:0;padding:8px 0}
-.workspace-shell .sidebar.collapsed .workspace-switcher-name,
-.workspace-shell .sidebar.collapsed .workspace-switcher-chevron{display:none}
+/* Workspace switcher */
+.ws-chrome .workspace-switcher{flex-shrink:0;margin:0 10px 16px}
 
-/* Drawer backdrop (rendered only while open; base styles cover all widths) */
-.sidebar-overlay{position:fixed;inset:0;z-index:55;border:none;padding:0;background:rgba(0,0,0,.5)}
+/* Scrollable nav area */
+.ws-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;margin:0 6px 4px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.ws-group-label{font-size:10.5px;font-weight:650;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:12px 12px 6px}
+.ws-section{margin-top:2px}
 
-/* Collapse control pinned below the nav */
-.workspace-shell .sidebar-footer{flex-shrink:0;border-top:1px solid var(--border);margin-top:10px;padding:10px 2px 0}
-.workspace-shell .sidebar-collapse-btn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:none;background:transparent;border-radius:9px;color:var(--muted);cursor:pointer;font:inherit;font-size:13.5px;text-align:left}
-.workspace-shell .sidebar-collapse-btn:hover{background:var(--surface);color:var(--text)}
-.workspace-shell .sidebar.collapsed .sidebar-collapse-btn{justify-content:center;padding:9px 0}
-.workspace-shell .sidebar.collapsed .sidebar-collapse-btn span{display:none}
+/* Nav rows */
+.ws-chrome .nav{display:grid;gap:2px}
+.ws-chrome .nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:9px 12px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-size:13.5px;text-align:left;cursor:pointer;transition:background .12s ease,color .12s ease}
+.ws-chrome .nav-item:hover{background:var(--surface);color:var(--text)}
+.ws-chrome .nav-item.active{background:color-mix(in srgb,var(--accent) 8%,transparent);color:var(--text);font-weight:650}
+.ws-chrome .nav-item-disabled{opacity:.42}
+.ws-chrome .nav-item-disabled:hover{background:transparent;color:var(--muted)}
+.ws-chrome .nav-icon{flex-shrink:0}
 
-/* Switcher dropdown should never outgrow short viewports */
-.workspace-shell .workspace-switcher-menu{max-height:min(70vh,520px);overflow-y:auto}
-.workspace-shell .sidebar.collapsed .workspace-switcher-menu{left:0;right:auto;width:260px}
+/* Footer collapse/pin control */
+.ws-footer{flex-shrink:0;border-top:1px solid var(--border);margin-top:6px;padding:10px 10px 12px}
+.ws-collapse-btn{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:none;background:transparent;border-radius:9px;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.ws-collapse-btn:hover{background:var(--surface);color:var(--text)}
+.ws-collapse-btn:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+
+/* Collapsed rail: centered icons, hidden labels */
+.ws-chrome:not(.pinned):not(.fly) .ws-brand{display:flex;justify-content:center;padding:14px 0 12px}
+.ws-chrome:not(.pinned):not(.fly) .ws-logo{width:26px;height:26px;border-radius:7px}
+.ws-chrome:not(.pinned):not(.fly) .ws-wordmark,
+.ws-chrome:not(.pinned):not(.fly) .ws-group-label,
+.ws-chrome:not(.pinned):not(.fly) .nav-item>span,
+.ws-chrome:not(.pinned):not(.fly) .ws-collapse-btn>span,
+.ws-chrome:not(.pinned):not(.fly) .workspace-switcher-name,
+.ws-chrome:not(.pinned):not(.fly) .workspace-switcher-chevron{display:none}
+.ws-chrome:not(.pinned):not(.fly) .nav-item{justify-content:center;gap:0;padding:0;min-height:40px}
+.ws-chrome:not(.pinned):not(.fly) .workspace-switcher{margin:0 0 12px}
+.ws-chrome:not(.pinned):not(.fly) .workspace-switcher-trigger{justify-content:center;gap:0;padding:6px 0}
+.ws-chrome:not(.pinned):not(.fly) .workspace-switcher-menu{left:4px;right:auto;width:264px}
+.ws-chrome:not(.pinned):not(.fly) .ws-section{margin-top:0}
+.ws-chrome:not(.pinned):not(.fly) .ws-footer{padding:10px 0 12px;display:flex;justify-content:center}
+.ws-chrome:not(.pinned):not(.fly) .ws-collapse-btn{justify-content:center;width:auto;padding:8px}
+
+/* Switcher dropdown must not outgrow short viewports */
+.ws-chrome .workspace-switcher-menu{max-height:min(70vh,520px);overflow-y:auto}
 
 /* Keyboard focus */
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.workspace-shell .sidebar-collapse-btn:focus-visible{outline-offset:0}
 
 /* Reduced motion */
 @media(prefers-reduced-motion:reduce){
-  .workspace-shell .sidebar{transition:none}
+  .ws-chrome{transition:none}
   .row-link{transition:none}
 }
 
-/* Medium screens: icon rail unless the user chose full width */
-@media(max-width:1023px) and (min-width:768px){
-  .workspace-shell .sidebar{width:72px}
-  .workspace-shell .sidebar:not(.collapsed){width:252px}
-}
-
-/* Small screens: off-canvas drawer driven by .open (JS), overlay closes it */
+/* Small screens: off-canvas drawer driven by .open (JS); backdrop closes it */
 @media(max-width:767px){
-  .workspace-shell{display:block}
+  .ws-chrome,.ws-chrome.pinned,.ws-chrome.fly{position:fixed;top:0;bottom:0;left:0;height:auto;width:min(300px,86vw);transform:translateX(-104%);visibility:hidden;transition:transform .22s ease,visibility .22s;z-index:60}
+  .workspace-shell .ws-chrome.open{transform:translateX(0);visibility:visible;box-shadow:0 0 0 1px var(--border),0 24px 60px rgba(0,0,0,.28)}
   .mobile-nav-btn{display:inline-flex}
   .topbar-search{display:none}
   .actions .btn:not(.icon-btn):not(.primary):not(.theme-toggle){display:none}
   .btn.primary .btn-label{display:none}
   .btn.primary{padding:0 11px}
 
-  .workspace-shell .sidebar,
-  .workspace-shell .sidebar.collapsed{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);height:auto;transform:translateX(-104%);visibility:hidden;transition:transform .22s ease,visibility .22s;z-index:60;box-shadow:none}
-  .workspace-shell .sidebar.open{transform:translateX(0);visibility:visible;box-shadow:0 0 0 1px var(--border),0 24px 60px rgba(0,0,0,.28)}
-
-  /* The drawer always shows the full, expanded layout regardless of the
-     desktop collapse preference */
-  .workspace-shell .sidebar.open.collapsed .nav a,
-  .workspace-shell .sidebar.open.collapsed .nav-item{justify-content:flex-start;gap:11px;padding:9px 12px}
-  .workspace-shell .sidebar.open.collapsed .nav a>span,
-  .workspace-shell .sidebar.open.collapsed .nav-item>span{display:inline}
-  .workspace-shell .sidebar.open .workspace-switcher-trigger{justify-content:flex-start;gap:9px;padding:8px 9px}
-  .workspace-shell .sidebar.open .workspace-switcher-name,
-  .workspace-shell .sidebar.open .workspace-switcher-chevron{display:block}
-  .workspace-shell .sidebar.open .sidebar-brand{justify-content:flex-start}
-  .workspace-shell .sidebar.open .sidebar-logo{max-width:186px}
-  .workspace-shell .sidebar.open .workspace-switcher-menu{left:0;right:0;width:auto}
-  .workspace-shell .sidebar-collapse-btn{display:none}
+  /* The drawer always shows the full layout, regardless of pinned/fly state */
+  .workspace-shell .ws-chrome.open .ws-brand{display:flex;justify-content:flex-start;padding:16px 10px 12px}
+  .workspace-shell .ws-chrome.open .ws-logo{width:30px;height:30px;border-radius:8px}
+  .workspace-shell .ws-chrome.open .ws-wordmark,
+  .workspace-shell .ws-chrome.open .ws-group-label,
+  .workspace-shell .ws-chrome.open .nav-item>span{display:block}
+  .workspace-shell .ws-chrome.open .nav-item{justify-content:flex-start;gap:12px;padding:9px 12px;min-height:0}
+  .workspace-shell .ws-chrome.open .workspace-switcher{margin:0 10px 16px}
+  .workspace-shell .ws-chrome.open .workspace-switcher-trigger{justify-content:flex-start;gap:9px;padding:8px 9px}
+  .workspace-shell .ws-chrome.open .workspace-switcher-name,
+  .workspace-shell .ws-chrome.open .workspace-switcher-chevron{display:block}
+  .workspace-shell .ws-chrome.open .workspace-switcher-menu{left:0;right:0;width:auto}
+  .workspace-shell .ws-chrome.open .ws-collapse-btn{display:none}
+  .workspace-shell .ws-chrome.open .ws-section{margin-top:2px}
 
   .sidebar-overlay{position:fixed;inset:0;z-index:55;border:none;padding:0;background:rgba(0,0,0,.5)}
 }

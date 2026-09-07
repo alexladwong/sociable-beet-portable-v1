@@ -5,20 +5,20 @@ import { canManageWorkspace as canManageWorkspaceRole, canManageProjects as canM
 
 type MembershipWithWorkspace = Membership & { workspace: Workspace };
 
-// Runs before first paint and before hydration so a returning user's collapsed
-// sidebar never flashes expanded. Must mirror readCollapsedPreference() in
+// Runs before first paint and before hydration so a returning user's pinned
+// sidebar never flashes collapsed. Must mirror readPinnedPreference() in
 // workspace-sidebar.tsx exactly - the DOM it produces and the state the client
 // hydrates with must agree.
 const SIDEBAR_BOOTSTRAP = `(function () {
   try {
-    var key = "sb.sidebar.collapsed";
+    var key = "sb.sidebar.pinned";
     var stored = null;
     try { stored = localStorage.getItem(key); } catch (e) {}
     var el = document.querySelector("[data-sidebar]");
     if (!el) return;
     var w = document.documentElement.clientWidth;
-    var collapsed = stored === "1" || (stored === null && w >= 768 && w < 1024);
-    if (collapsed) el.classList.add("collapsed");
+    var pinned = stored === "1" || (stored === null && w >= 1024);
+    if (pinned) el.classList.add("pinned");
   } catch (e) {}
 })();`;
 
