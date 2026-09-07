@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 import { requireWorkspaceRole } from "@/lib/permissions/workspace";
-import { canDeleteProjects } from "@/lib/permissions/roles";
 import {
   updateWorkspaceProject,
   setWorkspaceProjectStatus,
@@ -15,12 +14,22 @@ export type ProjectFormState = {
   fieldErrors?: Record<string, string[] | undefined>;
 } | null;
 
+/**
+ * Updates the project addressed by the hidden `workspaceSlug` + `projectId`
+ * form fields. Re-verifies membership + MANAGER+ role server-side, then
+ * scopes the update by workspaceId AND projectId in one query, so a swapped
+ * id can never touch another workspace's project (no-op -> "not found").
+ *
+ * NOTE: keep this action *unbound* - see createProjectAction in
+ * ../new/actions.ts for why (bound actions stall the no-JS document POST
+ * when returning validation state).
+ */
 export async function updateProjectAction(
-  workspaceSlug: string,
-  projectId: string,
   _prevState: ProjectFormState,
   formData: FormData
 ): Promise<ProjectFormState> {
+  const workspaceSlug = String(formData.get("workspaceSlug") || "");
+  const projectId = String(formData.get("projectId") || "");
   // Re-verified here regardless of what the UI shows - only MANAGER+ may edit.
   const { workspace } = await requireWorkspaceRole(workspaceSlug, "MANAGER");
 
@@ -66,17 +75,15 @@ export async function updateProjectAction(
 
 export async function archiveProjectAction(workspaceSlug: string, projectId: string) {
   // Archiving is more destructive than editing - requires ADMIN+.
-  const { workspace, membership } = await requireWorkspaceRole(workspaceSlug, "ADMIN");
-  if (!canDeleteProjects(membership.role)) {
-    redirect(`/workspace/${workspaceSlug}/projects/${projectId}`);
-  }
+  const { workspace } = await requireWorkspaceRole(workspaceSlug, "ADMIN");
   await setWorkspaceProjectStatus(workspace.id, projectId, "ARCHIVED");
   redirect(`/workspace/${workspaceSlug}/projects/${projectId}`);
 }
 
 export async function restoreProjectAction(workspaceSlug: string, projectId: string) {
   const { workspace } = await requireWorkspaceRole(workspaceSlug, "ADMIN");
-  await setWorkspaceProjectStatus(workspace.id, projectId, "PLANNING");
+  // Bring the project back as ACTIVE (the usual pre-archive working state).
+  await setWorkspaceProjectStatus(workspace.id, projectId, "ACTIVE");
   redirect(`/workspace/${workspaceSlug}/projects/${projectId}`);
 }
 

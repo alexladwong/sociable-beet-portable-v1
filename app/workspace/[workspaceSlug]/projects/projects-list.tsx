@@ -1,9 +1,7 @@
 import Link from "next/link";
-import type { Project, ProjectStatus, Task } from "@prisma/client";
+import type { Project, ProjectStatus } from "@prisma/client";
 import { EmptyState } from "@/components/workspace/empty-state";
 import type { ProjectSort } from "@/lib/projects";
-
-type ProjectWithTasks = Project & { tasks: Task[] };
 
 export function ProjectsList({
   workspaceSlug,
@@ -17,7 +15,7 @@ export function ProjectsList({
 }: {
   workspaceSlug: string;
   workspaceName: string;
-  projects: ProjectWithTasks[];
+  projects: Project[];
   canCreate: boolean;
   query: string;
   status: string;
@@ -81,9 +79,12 @@ export function ProjectsList({
               href={`/workspace/${workspaceSlug}/projects/${project.id}`}
               key={project.id}
             >
-              <strong>{project.name}</strong>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "baseline" }}>
+                <strong>{project.name}</strong>
+                <span className="pill" style={{ marginRight: 0 }}>{project.status}</span>
+              </div>
               <div className="meta">
-                {project.tasks.length} task{project.tasks.length === 1 ? "" : "s"} · {project.status} · {project.priority}
+                {project.priority}
                 {project.dueDate ? ` · Due ${project.dueDate.toLocaleDateString()}` : ""}
               </div>
               <div className="progress"><span style={{ width: `${project.progress}%` }} /></div>

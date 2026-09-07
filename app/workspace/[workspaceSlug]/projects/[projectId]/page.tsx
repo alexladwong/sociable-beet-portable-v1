@@ -82,7 +82,7 @@ export default async function ProjectDetailPage({
 
       {tab === "overview" ? (
         <>
-          <section className="grid metrics" style={{ gridTemplateColumns: "repeat(4,1fr)" }}>
+          <section className="grid metrics" style={{ gridTemplateColumns: "repeat(3,1fr)" }}>
             <div className="card">
               <div className="label">Status</div>
               <div className="value" style={{ fontSize: 18 }}>{project.status}</div>
@@ -95,10 +95,6 @@ export default async function ProjectDetailPage({
               <div className="label">Progress</div>
               <div className="value" style={{ fontSize: 18 }}>{project.progress}%</div>
               <div className="progress"><span style={{ width: `${project.progress}%` }} /></div>
-            </div>
-            <div className="card">
-              <div className="label">Tasks</div>
-              <div className="value" style={{ fontSize: 18 }}>{project.tasks.length}</div>
             </div>
           </section>
 

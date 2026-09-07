@@ -7,6 +7,7 @@ export function ProjectForm({
   isPending,
   error,
   fieldErrors,
+  hiddenFields,
   defaultValues,
   submitLabel,
   showProgress = false,
@@ -16,6 +17,13 @@ export function ProjectForm({
   isPending: boolean;
   error?: string;
   fieldErrors?: Record<string, string[] | undefined>;
+  /**
+   * Identifiers needed by the action (workspaceSlug, projectId). Rendered as
+   * hidden fields rather than closed over via bind(): bound server actions
+   * that return validation state stall the no-JS document POST response in
+   * the current Next/React versions. Everything is re-verified server-side.
+   */
+  hiddenFields?: Record<string, string>;
   defaultValues?: {
     name?: string;
     description?: string | null;
@@ -34,6 +42,10 @@ export function ProjectForm({
   const statusChoices = statusOptions ?? CREATABLE_PROJECT_STATUSES;
   return (
     <form action={formAction} className="form">
+      {hiddenFields &&
+        Object.entries(hiddenFields).map(([name, value]) => (
+          <input key={name} type="hidden" name={name} value={value} />
+        ))}
       <div>
         <div className="label" style={{ marginBottom: 6 }}>Name</div>
         <input name="name" defaultValue={defaultValues?.name} required minLength={2} />
@@ -46,7 +58,7 @@ export function ProjectForm({
       <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         <div>
           <div className="label" style={{ marginBottom: 6 }}>Status</div>
-          <select name="status" defaultValue={defaultValues?.status || "PLANNING"}>
+          <select name="status" defaultValue={defaultValues?.status || "ACTIVE"}>
             {statusChoices.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}

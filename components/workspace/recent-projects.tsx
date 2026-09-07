@@ -1,15 +1,13 @@
 import Link from "next/link";
-import type { Project, Task } from "@prisma/client";
+import type { Project } from "@prisma/client";
 import { EmptyState } from "./empty-state";
-
-type ProjectWithTasks = Project & { tasks: Task[] };
 
 export function RecentProjects({
   projects,
   workspaceSlug,
   canCreate,
 }: {
-  projects: ProjectWithTasks[];
+  projects: Project[];
   workspaceSlug: string;
   canCreate: boolean;
 }) {
@@ -30,7 +28,7 @@ export function RecentProjects({
           <Link className="row row-link" href={`/workspace/${workspaceSlug}/projects/${project.id}`} key={project.id}>
             <strong>{project.name}</strong>
             <div className="meta">
-              {project.tasks.length} task{project.tasks.length === 1 ? "" : "s"} · {project.status}
+              {project.status}
               {project.dueDate ? ` · Due ${project.dueDate.toLocaleDateString()}` : ""}
             </div>
             <div className="progress"><span style={{ width: `${project.progress}%` }} /></div>

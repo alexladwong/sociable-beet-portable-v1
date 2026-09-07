@@ -5,7 +5,6 @@ import {
 } from "@/lib/permissions/workspace";
 import { canManageMembers } from "@/lib/permissions/roles";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
-import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +39,7 @@ export default async function TeamPage({
             </button>
           )}
         </div>
-        {members.map((m: { id: Key | null | undefined; profile: { name: any; email: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }; role: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; createdAt: { toLocaleDateString: () => string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }; }) => (
+        {members.map((m) => (
           <div
             className="row"
             key={m.id}

@@ -34,7 +34,7 @@ export async function listWorkspaceProjects(workspaceId: string, filters: Projec
           ? { dueDate: "asc" }
           : { createdAt: "desc" };
 
-  return prisma.project.findMany({ where, include: { tasks: true }, orderBy });
+  return prisma.project.findMany({ where, orderBy });
 }
 
 /**
@@ -46,7 +46,7 @@ export async function listWorkspaceProjects(workspaceId: string, filters: Projec
 export async function getWorkspaceProject(workspaceId: string, projectId: string) {
   return prisma.project.findFirst({
     where: { id: projectId, workspaceId },
-    include: { tasks: true, creator: true },
+    include: { creator: true },
   });
 }
 

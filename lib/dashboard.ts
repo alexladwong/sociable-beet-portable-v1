@@ -16,7 +16,6 @@ export async function getWorkspaceDashboardData(workspaceId: string) {
       prisma.socialPost.count({ where: { workspaceId, status: "SCHEDULED" } }),
       prisma.project.findMany({
         where: { workspaceId },
-        include: { tasks: true },
         orderBy: { createdAt: "desc" },
         take: 4,
       }),

@@ -18,8 +18,7 @@ export function EditProjectForm({
   workspaceSlug: string;
   project: Project;
 }) {
-  const action = updateProjectAction.bind(null, workspaceSlug, project.id);
-  const [state, formAction, isPending] = useActionState(action, null);
+  const [state, formAction, isPending] = useActionState(updateProjectAction, null);
 
   return (
     <ProjectForm
@@ -27,6 +26,7 @@ export function EditProjectForm({
       isPending={isPending}
       error={state?.error}
       fieldErrors={state?.fieldErrors}
+      hiddenFields={{ workspaceSlug, projectId: project.id }}
       showProgress
       statusOptions={ALL_PROJECT_STATUSES}
       defaultValues={{

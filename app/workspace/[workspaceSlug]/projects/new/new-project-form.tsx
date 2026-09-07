@@ -5,8 +5,7 @@ import { createProjectAction } from "./actions";
 import { ProjectForm } from "../project-form";
 
 export function NewProjectForm({ workspaceSlug }: { workspaceSlug: string }) {
-  const action = createProjectAction.bind(null, workspaceSlug);
-  const [state, formAction, isPending] = useActionState(action, null);
+  const [state, formAction, isPending] = useActionState(createProjectAction, null);
 
   return (
     <ProjectForm
@@ -14,6 +13,7 @@ export function NewProjectForm({ workspaceSlug }: { workspaceSlug: string }) {
       isPending={isPending}
       error={state?.error}
       fieldErrors={state?.fieldErrors}
+      hiddenFields={{ workspaceSlug }}
       submitLabel="Create project"
     />
   );

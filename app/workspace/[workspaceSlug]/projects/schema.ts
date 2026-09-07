@@ -2,10 +2,12 @@ import { z } from "zod";
 import { ProjectStatus, Priority } from "@prisma/client";
 
 // The "new project" form only offers these - starting a brand-new project as
-// already-archived doesn't make sense. The edit form shows the full enum
+// already-archived doesn't make sense. ACTIVE is listed first so a new project
+// starts life as a live one by default (the dashboard's "Active Projects"
+// counter tracks status ACTIVE). The edit form shows the full enum
 // (ALL_PROJECT_STATUSES below) so an already-archived project still renders
 // correctly there. Validation accepts the full Prisma enum either way.
-export const CREATABLE_PROJECT_STATUSES = ["PLANNING", "ACTIVE", "REVIEW", "COMPLETED"] as const;
+export const CREATABLE_PROJECT_STATUSES = ["ACTIVE", "PLANNING", "REVIEW", "COMPLETED"] as const;
 export const ALL_PROJECT_STATUSES = Object.values(ProjectStatus);
 export const PROJECT_PRIORITIES = Object.values(Priority);
 
