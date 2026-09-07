@@ -11,7 +11,9 @@ export async function getWorkspaceDashboardData(workspaceId: string) {
 
   const [activeProjectsCount, tasksCompletedCount, scheduledPostsCount, recentProjects, upcomingPosts] =
     await Promise.all([
-      prisma.project.count({ where: { workspaceId, status: "ACTIVE" } }),
+      prisma.project.count({
+        where: { workspaceId, status: { notIn: ["ARCHIVED", "COMPLETED"] } },
+      }),
       prisma.task.count({ where: { status: "COMPLETED", project: { workspaceId } } }),
       prisma.socialPost.count({ where: { workspaceId, status: "SCHEDULED" } }),
       prisma.project.findMany({

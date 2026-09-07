@@ -3,7 +3,7 @@ import "server-only";
 import type { Prisma, ProjectStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-export type ProjectSort = "newest" | "oldest" | "name" | "dueDate";
+export type ProjectSort = "updated" | "created" | "dueDate" | "name" | "newest" | "oldest";
 
 export type ProjectListFilters = {
   search?: string;
@@ -28,11 +28,13 @@ export async function listWorkspaceProjects(workspaceId: string, filters: Projec
   const orderBy: Prisma.ProjectOrderByWithRelationInput =
     filters.sort === "oldest"
       ? { createdAt: "asc" }
-      : filters.sort === "name"
-        ? { name: "asc" }
-        : filters.sort === "dueDate"
-          ? { dueDate: "asc" }
-          : { createdAt: "desc" };
+      : filters.sort === "updated"
+        ? { updatedAt: "desc" }
+        : filters.sort === "name"
+          ? { name: "asc" }
+          : filters.sort === "dueDate"
+            ? { dueDate: "asc" }
+            : { createdAt: "desc" };
 
   return prisma.project.findMany({ where, orderBy });
 }

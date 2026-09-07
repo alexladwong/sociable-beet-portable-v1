@@ -7,7 +7,7 @@ import { ProjectStatus, Priority } from "@prisma/client";
 // counter tracks status ACTIVE). The edit form shows the full enum
 // (ALL_PROJECT_STATUSES below) so an already-archived project still renders
 // correctly there. Validation accepts the full Prisma enum either way.
-export const CREATABLE_PROJECT_STATUSES = ["ACTIVE", "PLANNING", "REVIEW", "COMPLETED"] as const;
+export const CREATABLE_PROJECT_STATUSES = ["ACTIVE", "PLANNING", "ON_HOLD", "REVIEW", "COMPLETED"] as const;
 export const ALL_PROJECT_STATUSES = Object.values(ProjectStatus);
 export const PROJECT_PRIORITIES = Object.values(Priority);
 

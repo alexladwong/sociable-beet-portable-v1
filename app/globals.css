@@ -345,9 +345,4 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 /* Topbar */
 .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;line-height:1;padding:3px 5px;border:1px solid var(--border);border-radius:5px;color:var(--muted);margin-left:6px}
 
-/* Skeleton loading shimmer (route-level loading.tsx) */
-.sk{position:relative;overflow:hidden;background:var(--surface)}
-.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--card-bg) 55%,transparent),transparent);animation:sk-shimmer 1.5s infinite}
-@keyframes sk-shimmer{100%{transform:translateX(100%)}}
-@media(prefers-reduced-motion:reduce){.sk::after{animation:none}}
-.sk-chrome{pointer-events:none}
+.line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}

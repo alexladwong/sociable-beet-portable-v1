@@ -7,8 +7,8 @@ import { ProjectsList } from "./projects-list";
 
 export const dynamic = "force-dynamic";
 
-const STATUS_OPTIONS: ProjectStatus[] = ["PLANNING", "ACTIVE", "REVIEW", "COMPLETED", "ARCHIVED"];
-const SORT_OPTIONS: ProjectSort[] = ["newest", "oldest", "name", "dueDate"];
+const STATUS_OPTIONS: ProjectStatus[] = ["PLANNING", "ACTIVE", "ON_HOLD", "REVIEW", "COMPLETED", "ARCHIVED"];
+const SORT_OPTIONS: ProjectSort[] = ["updated", "created", "dueDate", "name"];
 
 export default async function ProjectsPage({
   params,
@@ -23,7 +23,7 @@ export default async function ProjectsPage({
   const memberships = await listMembershipsForProfile(profile.id);
 
   const activeStatus = STATUS_OPTIONS.includes(status as ProjectStatus) ? (status as ProjectStatus) : undefined;
-  const activeSort = SORT_OPTIONS.includes(sort as ProjectSort) ? (sort as ProjectSort) : "newest";
+  const activeSort = SORT_OPTIONS.includes(sort as ProjectSort) ? (sort as ProjectSort) : "updated";
 
   const projects = await listWorkspaceProjects(workspace.id, {
     search: q,

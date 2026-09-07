@@ -47,10 +47,10 @@ export function ProjectsList({
           ))}
         </select>
         <select name="sort" defaultValue={sort}>
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="name">Name (A-Z)</option>
+          <option value="updated">Recently updated</option>
+          <option value="created">Created date</option>
           <option value="dueDate">Due date</option>
+          <option value="name">Name (A-Z)</option>
         </select>
         <button type="submit" className="btn">Apply</button>
         {isFiltered && (
@@ -64,7 +64,7 @@ export function ProjectsList({
             message={
               isFiltered
                 ? "No projects match your filters."
-                : "No projects yet. Create your first project to start organizing your team's work."
+                : "No projects yet. Create your first project to start organizing work, deadlines and team activity."
             }
             action={
               !isFiltered && canCreate
@@ -83,8 +83,10 @@ export function ProjectsList({
                 <strong>{project.name}</strong>
                 <span className="pill" style={{ marginRight: 0 }}>{project.status}</span>
               </div>
+              {project.description && <div className="small line-clamp-1">{project.description}</div>}
               <div className="meta">
                 {project.priority}
+                {` · Created ${project.createdAt.toLocaleDateString()}`}
                 {project.dueDate ? ` · Due ${project.dueDate.toLocaleDateString()}` : ""}
               </div>
               <div className="progress"><span style={{ width: `${project.progress}%` }} /></div>

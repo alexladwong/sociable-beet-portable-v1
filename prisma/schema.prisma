@@ -10,6 +10,7 @@ datasource db {
 enum ProjectStatus {
   PLANNING
   ACTIVE
+  ON_HOLD
   REVIEW
   COMPLETED
   ARCHIVED
