@@ -33,6 +33,8 @@ enum Priority {
 
 enum SocialPostStatus {
   DRAFT
+  IN_REVIEW
+  APPROVED
   SCHEDULED
   PUBLISHED
   FAILED
@@ -125,29 +127,71 @@ model Task {
 // Not a foreign key into neon_auth's schema (managed separately by Neon Auth) -
 // this is app-owned profile data keyed by the same id.
 model Profile {
-  id              String       @id
-  email           String       @unique
+  id              String            @id
+  email           String            @unique
   name            String?
   avatarUrl       String?
   memberships     Membership[]
   createdProjects Project[]
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  authoredPosts   SocialPost[]      @relation("SocialPostAuthor")
+  reviewedPosts   SocialPost[]      @relation("SocialPostReviewer")
+  approvedPosts   SocialPost[]      @relation("SocialPostApprover")
+  postEvents      SocialPostEvent[] @relation("SocialPostEventActor")
+  postComments    SocialComment[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }
 
 model SocialPost {
-  id          String           @id @default(cuid())
-  workspaceId String
-  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  title       String?
-  body        String
-  type        SocialPostType   @default(INSPIRATION)
-  status      SocialPostStatus @default(DRAFT)
-  channels    String[]
-  hashtags    String[]
-  mediaUrl    String?
-  scheduledAt DateTime?
-  publishedAt DateTime?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id                String            @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  title             String?
+  body              String
+  type              SocialPostType    @default(INSPIRATION)
+  status            SocialPostStatus  @default(DRAFT)
+  channels          String[]
+  hashtags          String[]
+  mediaUrl          String?
+  authorProfileId   String?
+  author            Profile?          @relation("SocialPostAuthor", fields: [authorProfileId], references: [id], onDelete: SetNull)
+  reviewerProfileId String?
+  reviewer          Profile?          @relation("SocialPostReviewer", fields: [reviewerProfileId], references: [id], onDelete: SetNull)
+  approverProfileId String?
+  approver          Profile?          @relation("SocialPostApprover", fields: [approverProfileId], references: [id], onDelete: SetNull)
+  scheduledAt       DateTime?
+  publishedAt       DateTime?
+  events            SocialPostEvent[]
+  comments          SocialComment[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([workspaceId])
+}
+
+// Immutable editorial history: created / submitted / approved / scheduled /
+// published / sent back to draft. Real entries only - no fake activity.
+model SocialPostEvent {
+  id             String     @id @default(cuid())
+  postId         String
+  post           SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  actorProfileId String?
+  actor          Profile?   @relation("SocialPostEventActor", fields: [actorProfileId], references: [id], onDelete: SetNull)
+  action         String // created | submitted | approved | sent_back | scheduled | published | edited
+  note           String?
+  createdAt      DateTime   @default(now())
+
+  @@index([postId])
+}
+
+model SocialComment {
+  id              String     @id @default(cuid())
+  postId          String
+  post            SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorProfileId String?
+  author          Profile?   @relation(fields: [authorProfileId], references: [id], onDelete: SetNull)
+  body            String
+  createdAt       DateTime   @default(now())
+
+  @@index([postId])
 }

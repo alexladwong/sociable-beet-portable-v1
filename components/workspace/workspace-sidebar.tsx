@@ -27,7 +27,7 @@ type MembershipWithWorkspace = Membership & { workspace: Workspace };
 // Which top-level section is highlighted. Decoupled from the topbar's (free-text)
 // title so nested pages - e.g. a single project's detail page - can show their
 // own title while "Projects" stays the active nav item.
-export type WorkspaceNavKey = "Workspace" | "Projects" | "Calendar" | "Team" | "Settings";
+export type WorkspaceNavKey = "Workspace" | "Projects" | "Calendar" | "Social" | "Team" | "Settings";
 
 const STORAGE_KEY = "sociable-beet-sidebar-collapsed"; // "1" = collapsed, "0" = expanded
 const LEGACY_STORAGE_KEY = "sb.sidebar.pinned"; // pre-rename key ("1" meant expanded)
@@ -225,7 +225,7 @@ export function WorkspaceSidebar({
             {navLink("Projects", `/workspace/${slug}/projects`, ProjectsIcon, active === "Projects")}
             {navLink("Calendar", `/workspace/${slug}/calendar`, CalendarIcon, active === "Calendar")}
             {disabledNavItem("Tasks", TasksIcon)}
-            {disabledNavItem("Social Studio", SocialIcon)}
+            {navLink("Social Studio", `/workspace/${slug}/social`, SocialIcon, active === "Social")}
             {disabledNavItem("Files", FilesIcon)}
             {disabledNavItem("Activity", ActivityIcon)}
             {disabledNavItem("Analytics", AnalyticsIcon)}

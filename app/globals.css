@@ -386,3 +386,15 @@ a.cal-event:hover{background:color-mix(in srgb,var(--text) 8%,var(--surface))}
   .cal-window{min-width:0}
   .cal-filters{margin-left:0}
 }
+
+/* Social Studio */
+.social-pipeline{align-items:flex-start}
+.social-col{min-height:120px}
+.social-col .row:first-of-type{border-top:0}
+.social-card-link{display:block;padding:10px 12px;margin:0 -4px 6px;border:1px solid var(--border);border-radius:10px;text-decoration:none;background:var(--bg)}
+.social-card-link:hover{border-color:var(--muted)}
+.channel-chip{border:1px solid var(--border);background:var(--card-bg);color:var(--muted);border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer}
+.channel-chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast)}
+.channels-picker{display:flex;gap:8px;flex-wrap:wrap}
+.channel-dot{font-size:9.5px;font-weight:700;border:1px solid var(--border);border-radius:5px;padding:2px 4px;color:var(--muted)}
+.social blockquote{font-size:17px;line-height:1.6}

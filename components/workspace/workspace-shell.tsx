@@ -5,30 +5,6 @@ import { canManageWorkspace as canManageWorkspaceRole, canManageProjects as canM
 
 type MembershipWithWorkspace = Membership & { workspace: Workspace };
 
-// Runs before first paint and before hydration so a returning user's pinned
-// sidebar never flashes collapsed. Must mirror readPinnedPreference() in
-// workspace-sidebar.tsx exactly - the DOM it produces and the state the client
-// hydrates with must agree.
-const SIDEBAR_BOOTSTRAP = `(function () {
-  try {
-    var key = "sociable-beet-sidebar-collapsed";
-    var stored = null;
-    try { stored = localStorage.getItem(key); } catch (e) {}
-    if (stored !== "0" && stored !== "1") {
-      try {
-        var legacy = localStorage.getItem("sb.sidebar.pinned");
-        if (legacy === "1") stored = "0";
-        else if (legacy === "0") stored = "1";
-      } catch (e) {}
-    }
-    var el = document.querySelector("[data-sidebar]");
-    if (!el) return;
-    var w = document.documentElement.clientWidth;
-    var expanded = stored === "0" || (stored === null && w >= 1100);
-    if (expanded) el.classList.add("pinned");
-  } catch (e) {}
-})();`;
-
 export function WorkspaceShell({
   workspace,
   membership,
@@ -59,7 +35,6 @@ export function WorkspaceShell({
         active={active}
         canManageWorkspace={canManage}
       />
-      <script id="sidebar-bootstrap" dangerouslySetInnerHTML={{ __html: SIDEBAR_BOOTSTRAP }} />
       <main className="main">
         <WorkspaceTopbar
           title={title ?? active}

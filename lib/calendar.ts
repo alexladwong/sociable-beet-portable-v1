@@ -93,7 +93,7 @@ export async function getCalendarEvents(
         kind: "post",
         title: s.title || s.body.slice(0, 60),
         date: s.scheduledAt,
-        href: null, // Social Studio UI is a later phase - no dead links
+        href: `/workspace/${workspaceSlug}/social/posts/${s.id}`,
         meta: s.type,
       });
     }
