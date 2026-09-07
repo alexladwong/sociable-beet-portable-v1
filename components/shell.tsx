@@ -1,3 +1,5 @@
+import { ThemeToggle } from "./theme-toggle";
+
 export function Shell({children,title="Workspace"}:{children:React.ReactNode,title?:string}) {
   return (
     <div className="shell">
@@ -14,7 +16,7 @@ export function Shell({children,title="Workspace"}:{children:React.ReactNode,tit
       <main className="main">
         <header className="topbar">
           <strong>{title}</strong>
-          <div className="actions"><button className="btn">Invite</button><button className="btn primary">New Project</button></div>
+          <div className="actions"><ThemeToggle /><button className="btn">Invite</button><button className="btn primary">New Project</button></div>
         </header>
         <div className="content">{children}</div>
       </main>
