@@ -35,8 +35,17 @@ export async function signUpWithEmail(
   // Mirror the Neon Auth user into our app's Profile table.
   await prisma.profile.upsert({
     where: { id: session.user.id },
-    create: { id: session.user.id, email: session.user.email, name: session.user.name },
-    update: { email: session.user.email, name: session.user.name },
+    create: {
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.name,
+      avatarUrl: session.user.image ?? null,
+    },
+    update: {
+      email: session.user.email,
+      name: session.user.name,
+      avatarUrl: session.user.image ?? null,
+    },
   });
 
   redirect("/workspace");

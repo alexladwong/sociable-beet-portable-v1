@@ -3,7 +3,7 @@ import type { Profile } from "@prisma/client";
 import { ThemeToggle } from "../theme-toggle";
 import { UserMenu } from "./user-menu";
 import { SidebarMenuButton } from "./sidebar-menu-button";
-import { SearchIcon, BellIcon, PlusIcon } from "./icons";
+import { SearchIcon, BellIcon, PlusIcon, CommandIcon } from "./icons";
 
 export function WorkspaceTopbar({
   title,
@@ -27,7 +27,8 @@ export function WorkspaceTopbar({
       <div className="actions">
         <button type="button" className="btn topbar-search" disabled title="Search coming soon">
           <SearchIcon />
-          <span>Search…</span>
+          <span>Search</span>
+          <span className="kbd">&#8984;K</span>
         </button>
         <button type="button" className="btn icon-btn" disabled title="Notifications coming soon">
           <BellIcon />

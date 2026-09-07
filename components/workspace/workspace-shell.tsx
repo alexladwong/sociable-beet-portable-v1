@@ -11,14 +11,21 @@ type MembershipWithWorkspace = Membership & { workspace: Workspace };
 // hydrates with must agree.
 const SIDEBAR_BOOTSTRAP = `(function () {
   try {
-    var key = "sb.sidebar.pinned";
+    var key = "sociable-beet-sidebar-collapsed";
     var stored = null;
     try { stored = localStorage.getItem(key); } catch (e) {}
+    if (stored !== "0" && stored !== "1") {
+      try {
+        var legacy = localStorage.getItem("sb.sidebar.pinned");
+        if (legacy === "1") stored = "0";
+        else if (legacy === "0") stored = "1";
+      } catch (e) {}
+    }
     var el = document.querySelector("[data-sidebar]");
     if (!el) return;
     var w = document.documentElement.clientWidth;
-    var pinned = stored === "1" || (stored === null && w >= 1024);
-    if (pinned) el.classList.add("pinned");
+    var expanded = stored === "0" || (stored === null && w >= 1100);
+    if (expanded) el.classList.add("pinned");
   } catch (e) {}
 })();`;
 
@@ -48,10 +55,11 @@ export function WorkspaceShell({
       <WorkspaceSidebar
         workspace={workspace}
         memberships={memberships}
+        profile={profile}
         active={active}
         canManageWorkspace={canManage}
       />
-      <script dangerouslySetInnerHTML={{ __html: SIDEBAR_BOOTSTRAP }} />
+      <script id="sidebar-bootstrap" dangerouslySetInnerHTML={{ __html: SIDEBAR_BOOTSTRAP }} />
       <main className="main">
         <WorkspaceTopbar
           title={title ?? active}

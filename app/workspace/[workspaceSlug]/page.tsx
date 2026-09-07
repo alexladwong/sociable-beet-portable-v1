@@ -44,7 +44,7 @@ export default async function WorkspaceDashboardPage({
   });
 
   return (
-    <WorkspaceShell workspace={workspace} membership={membership} profile={profile} memberships={memberships} active="Dashboard">
+    <WorkspaceShell workspace={workspace} membership={membership} profile={profile} memberships={memberships} active="Workspace">
       <div className="dash-welcome">
         <div>
           <h1>{greeting()}, {firstName}</h1>

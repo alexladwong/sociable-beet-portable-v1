@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   // Add favicon
   icons: {
-    icon: "/favicon.ico",
+    icon: ["/favicon.ico", "/icon.png"],
+    apple: ["/apple-icon.png"],
   },
   title: "Sociable Beet",
   // SEO metadata

@@ -5,6 +5,7 @@ import {
 } from "@/lib/permissions/workspace";
 import { canManageMembers } from "@/lib/permissions/roles";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
+import { UserAvatar } from "@/components/workspace/user-avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export default async function TeamPage({
             style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div className="avatar">{(m.profile.name || m.profile.email).slice(0, 1).toUpperCase()}</div>
+              <UserAvatar name={m.profile.name} email={m.profile.email} size={30} />
               <div>
                 <strong>{m.profile.name || m.profile.email}</strong>
                 <div className="meta">{m.profile.email}</div>
