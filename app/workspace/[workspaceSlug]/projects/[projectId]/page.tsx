@@ -3,9 +3,11 @@ import Link from "next/link";
 import { requireWorkspaceMembership, listMembershipsForProfile } from "@/lib/permissions/workspace";
 import { canManageProjects, canDeleteProjects } from "@/lib/permissions/roles";
 import { getWorkspaceProject } from "@/lib/projects";
+import { countProjectTasks, countProjectCompletedTasks, listProjectTasks } from "@/lib/tasks";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
 import { ConfirmSubmitButton } from "@/components/workspace/confirm-submit-button";
 import { archiveProjectAction, restoreProjectAction, deleteProjectAction } from "./actions";
+import { TasksSection } from "./tasks/tasks-section";
 
 export const dynamic = "force-dynamic";
 
@@ -24,11 +26,13 @@ export default async function ProjectDetailPage({
   const tab: Tab = (TABS as readonly string[]).includes(tabParam || "") ? (tabParam as Tab) : "overview";
 
   const { profile, membership, workspace } = await requireWorkspaceMembership(workspaceSlug);
-  const [memberships, project] = await Promise.all([
+  const [memberships, project, taskCount, completedCount] = await Promise.all([
     listMembershipsForProfile(profile.id),
     // Scoped by workspace.id + projectId together - a project from another
     // workspace can never be returned here, even if its id is guessed.
     getWorkspaceProject(workspace.id, projectId),
+    countProjectTasks(workspace.id, projectId),
+    countProjectCompletedTasks(workspace.id, projectId),
   ]);
 
   if (!project) notFound();
@@ -38,6 +42,8 @@ export default async function ProjectDetailPage({
   const archiveAction = archiveProjectAction.bind(null, workspaceSlug, projectId);
   const restoreAction = restoreProjectAction.bind(null, workspaceSlug, projectId);
   const deleteAction = deleteProjectAction.bind(null, workspaceSlug, projectId);
+
+  const tasks = tab === "tasks" ? await listProjectTasks(workspace.id, projectId) : [];
 
   return (
     <WorkspaceShell
@@ -80,9 +86,9 @@ export default async function ProjectDetailPage({
         )}
       </div>
 
-      {tab === "overview" ? (
+      {tab === "overview" && (
         <>
-          <section className="grid metrics" style={{ gridTemplateColumns: "repeat(3,1fr)" }}>
+          <section className="grid metrics" style={{ gridTemplateColumns: "repeat(4,1fr)" }}>
             <div className="card">
               <div className="label">Status</div>
               <div className="value" style={{ fontSize: 18 }}>{project.status}</div>
@@ -95,6 +101,11 @@ export default async function ProjectDetailPage({
               <div className="label">Progress</div>
               <div className="value" style={{ fontSize: 18 }}>{project.progress}%</div>
               <div className="progress"><span style={{ width: `${project.progress}%` }} /></div>
+            </div>
+            <div className="card">
+              <div className="label">Tasks</div>
+              <div className="value" style={{ fontSize: 18 }}>{completedCount}/{taskCount}</div>
+              <div className="small">completed</div>
             </div>
           </section>
 
@@ -150,7 +161,18 @@ export default async function ProjectDetailPage({
             </div>
           )}
         </>
-      ) : (
+      )}
+
+      {tab === "tasks" && (
+        <TasksSection
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          tasks={tasks}
+          canManage={canEdit}
+        />
+      )}
+
+      {(tab === "activity" || tab === "files") && (
         <div className="card">
           <h2 className="section-title">{tab[0].toUpperCase() + tab.slice(1)}</h2>
           <p className="small">Coming next - {tab} for this project will live here.</p>
