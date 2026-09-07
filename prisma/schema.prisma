@@ -46,14 +46,45 @@ enum SocialPostType {
   ANNOUNCEMENT
 }
 
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MANAGER
+  MEMBER
+  GUEST
+}
+
 model Workspace {
   id          String       @id @default(cuid())
   name        String
   slug        String       @unique
+  description String?
+  logoUrl     String?
+  memberships Membership[]
   projects    Project[]
   socialPosts SocialPost[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+// Join model between a Profile and a Workspace, carrying the member's role
+// within that workspace. A profile can belong to many workspaces, and a
+// workspace can have many member profiles.
+model Membership {
+  id          String        @id @default(cuid())
+  profileId   String
+  workspaceId String
+  role        WorkspaceRole @default(MEMBER)
+
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([profileId, workspaceId])
+  @@index([workspaceId])
+  @@index([profileId])
 }
 
 model Project {
@@ -87,11 +118,12 @@ model Task {
 // Not a foreign key into neon_auth's schema (managed separately by Neon Auth) -
 // this is app-owned profile data keyed by the same id.
 model Profile {
-  id        String   @id
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String       @id
+  email       String       @unique
+  name        String?
+  memberships Membership[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model SocialPost {

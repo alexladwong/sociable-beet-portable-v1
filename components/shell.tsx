@@ -2,7 +2,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 export function Shell({children,title="Workspace"}:{children:React.ReactNode,title?:string}) {
   return (
-    <div className="shell">
+    <div className="shell plain-shell">
       <aside className="sidebar">
         <div className="brand">Sociable Beet</div>
         <nav className="nav">

@@ -1,20 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useTheme } from "@/lib/use-theme";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    setTheme((document.documentElement.dataset.theme as "light" | "dark") || "light");
-  }, []);
-
-  function toggle() {
-    const next = theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    window.localStorage.setItem("theme", next);
-    setTheme(next);
-  }
+  const { theme, toggle } = useTheme();
 
   return (
     <button

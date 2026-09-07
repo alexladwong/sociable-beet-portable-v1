@@ -1,26 +1,14 @@
-import { auth } from "@/lib/auth/server";
-import { Shell } from "@/components/shell";
-import { signOutAction } from "./actions";
+import { redirect } from "next/navigation";
+import { requireAuthenticatedProfile, ensureDefaultWorkspace } from "@/lib/permissions/workspace";
 
-// Session data depends on cookies, so this page must render dynamically.
+// Session/membership data depends on cookies, so this must render dynamically.
 export const dynamic = "force-dynamic";
 
-export default async function WorkspacePage() {
-  const { data: session } = await auth.getSession();
-
-  return (
-    <Shell title="Workspace">
-      <section className="hero">
-        <h1>Signed in as {session?.user?.name || session?.user?.email}</h1>
-        <p>This page is protected by Neon Auth middleware (see proxy.ts) - you can only see it while signed in.</p>
-      </section>
-      <div className="card">
-        <h2 className="section-title">Account</h2>
-        <div className="row"><strong>Email</strong><div className="meta">{session?.user?.email}</div></div>
-        <form action={signOutAction}>
-          <button type="submit" className="btn" style={{ marginTop: 16 }}>Sign out</button>
-        </form>
-      </div>
-    </Shell>
-  );
+// Bare /workspace is an entry point, not a page: resolve the signed-in
+// user's default workspace (creating one on first visit) and send them
+// there. Actual dashboard content lives at /workspace/[workspaceSlug].
+export default async function WorkspaceEntryPage() {
+  const { profile } = await requireAuthenticatedProfile();
+  const workspace = await ensureDefaultWorkspace(profile.id, profile.name || profile.email);
+  redirect(`/workspace/${workspace.slug}`);
 }
